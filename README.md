@@ -7,6 +7,7 @@
   - [Portainer](#install-portainer-ce)
   - [Pi-Hole](#install-pi-hole)
   - [NextCloud](#install-nextcloud)
+  - [Netdata](#install-netdata)
 
 <a name="install-docker"></a>
 
@@ -159,4 +160,35 @@ services:
             - MYSQL_PASSWORD=password
             - MYSQL_DATABASE=nextcloud
             - MYSQL_USER=nextcloud
+```
+
+<a name="install-netdata"></a>
+
+### Netdata
+
+```yaml
+version: '3'
+services:
+    netdata:
+        image: netdata/netdata
+        container_name: netdata
+        hostname: localhost
+        ports:
+          - 19999:19999
+        cap_add:
+            - SYS_PTRACE
+        security_opt:
+            - apparmor:unconfined
+        volumes:
+            - ./netdata/netdataconfig/netdata:/etc/netdata
+            - ./netdata/netdatalib:/var/lib/netdata
+            - ./netdata/netdatacache:/var/cache/netdata
+            - /etc/passwd:/host/etc/passwd:ro
+            - /etc/group:/host/etc/group:ro
+            - /etc/localtime:/etc/localtime:ro
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /etc/os-release:/host/etc/os-release:ro
+            - /var/log:/host/var/log:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
 ```

@@ -6,6 +6,7 @@
 - [Contenedores](#container)
   - [Portainer](#install-portainer-ce)
   - [Pi-Hole](#install-pi-hole)
+  - [NextCloud](#install-nextcloud)
 
 <a name="install-docker"></a>
 
@@ -120,4 +121,42 @@ services:
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+```
+
+<a nas="install-nextcloud"></a>
+
+### NextCloud
+
+```yaml
+version: '3'
+
+services:
+    nextcloud_db:
+        image: mariadb:10.6
+        container_name: nextcloud_db
+        command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=nextcloud
+            - MYSQL_USER=nextcloud
+    nextcloud:
+        image: nextcloud
+        container_name: nextcloud
+        ports:
+            - 443:443
+            - 80:80
+        links:
+            - nextcloud_db
+        volumes:
+            - ./nextcloud:/var/www/html
+        environment:
+            - NEXTCLOUD_ADMIN_USER=nextcloud
+            - NEXTCLOUD_ADMIN_PASSWORD=password
+            - MYSQL_HOST=dbnextcloud
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=nextcloud
+            - MYSQL_USER=nextcloud
 ```

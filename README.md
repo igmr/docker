@@ -1,11 +1,8 @@
-  - [Index](#Index)
-    - [Instalación de docker](#install-docker)
-    - [Instalación de docker-compose](#install-docker-compose)
-
-
 # Contenedores Docker
 
 ## Index
+  - [Instalación de docker](#install-docker)
+  - [Instalación de docker-compose](#install-docker-compose)
 
 <a name="install-docker"></a>
 

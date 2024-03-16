@@ -1,13 +1,14 @@
-# Contenedores Docker
+# Docker
 
-## Index
-  - [Instalación de docker](#install-docker)
-  - [Configuración de docker](#settings-docker)
-  - [Instalación de docker-compose](#install-docker-compose)
+- [Instalación de docker](#install-docker)
+- [Configuración de docker](#settings-docker)
+- [Instalación de docker-compose](#install-docker-compose)
+- [Contenedores](#container)
+  - [Portainer](#install-portainer-ce)
 
 <a name="install-docker"></a>
 
-### Instalación de docker
+## Instalación de docker
 
 ```shell
 # =============================================================================
@@ -33,7 +34,7 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin d
 ```
 <a name="settings-docker"></a>
 
-### Configuración de docker
+## Configuración de docker
 
 ```shell
 # =============================================================================
@@ -60,11 +61,32 @@ docker run hello-world
 
 <a name="install-docker-compose"></a>
 
-### Instalación de docker-compose
+## Instalación de docker-compose
 
 ```shell
 # =============================================================================
 # Instalación de docker-compose
 # =============================================================================
 sudo apt install -y docker-compose
+```
+<a name="container"></a>
+
+## Contenedores
+
+<a name="install-portainer-ce"></a>
+
+### Portainer CE
+
+```yaml
+version: "3"
+services:
+    portainer:
+        image: portainer/portainer-ce:latest
+        container_name: portainer
+        ports:
+            - 9443:9443
+        volumes:
+            - /home/ubuntu/docker/portainer/data:/data
+            - /var/run/docker.sock:/var/run/docker.sock
+
 ```

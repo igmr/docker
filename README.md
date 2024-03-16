@@ -5,6 +5,7 @@
 - [Instalación de docker-compose](#install-docker-compose)
 - [Contenedores](#container)
   - [Portainer](#install-portainer-ce)
+  - [Pi-Hole](#install-pi-hole)
 
 <a name="install-docker"></a>
 
@@ -89,4 +90,34 @@ services:
             - /home/ubuntu/docker/portainer/data:/data
             - /var/run/docker.sock:/var/run/docker.sock
 
+```
+
+<a name="install-pi-hole"></a>
+
+### Pi-Hole
+
+```yaml
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
+      - "80:80/tcp"
+    environment:
+      TZ: 'America/Chicago'
+      WEBPASSWORD: 'your-password'
+    # Volumes store your data between container upgrades
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
 ```

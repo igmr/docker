@@ -4,6 +4,7 @@
 - [Configuración de docker](#settings-docker)
 - [Instalación de docker-compose](#install-docker-compose)
 - [Contenedores](#container)
+    - [Heimdall](#install-heimdall) 
     - [Portainer](#install-portainer-ce)
     - [Pi-Hole](#install-pi-hole)
     - [NextCloud](#install-nextcloud)
@@ -80,6 +81,28 @@ sudo apt install -y docker-compose
 <a name="container"></a>
 
 ## Contenedores
+
+<a name="heimdall"></a>
+
+### Heimdall
+
+```yaml
+version: '3'
+services:
+    heimdall:
+        image: linuxserver/heimdall
+        container_name: heimdall
+        volumes:
+            - /home/user/appdata/heimdall:/config
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/London
+        ports:
+            - 80:80
+            - 443:443
+        restart: unless-stopped
+```
 
 <a name="install-portainer-ce"></a>
 

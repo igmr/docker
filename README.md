@@ -12,6 +12,7 @@
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
         - [PostgreSQL](#install-postgresql)
+        - [SQLite](#install-sqlite)
 
 <a name="install-docker"></a>
 
@@ -282,3 +283,28 @@ services:
         ports:
             - 8080:8080
 ```
+
+<a name="install-sqlite"></a>
+
+#### SQLite
+
+```yaml
+version: '3'
+
+services:
+    sqlitebrowser:
+        image: lscr.io/linuxserver/sqlitebrowser:latest
+        container_name: sqlitebrowser
+        security_opt:
+            - seccomp:unconfined #optional
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Etc/UTC
+        volumes:
+            - /path/to/config:/config
+        ports:
+            - 3000:3000
+            - 3001:3001
+```
+

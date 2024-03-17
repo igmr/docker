@@ -82,7 +82,7 @@ sudo apt install -y docker-compose
 
 ## Contenedores
 
-<a name="heimdall"></a>
+<a name="install-heimdall"></a>
 
 ### Heimdall
 

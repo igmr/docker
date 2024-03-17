@@ -10,6 +10,7 @@
     - [Netdata](#install-netdata)
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
+        - [MariaDB](#install-mariadb)
 
 <a name="install-docker"></a>
 
@@ -226,4 +227,31 @@ services:
         container_name: adminer-mysql
         ports:
         - 8080:8080
+```
+
+<a name="install-mariadb"></a>
+
+#### MariaDB
+
+```yaml
+version: '3.1'
+
+services:
+    mariadb:
+        image: mariadb:11.1
+        container_name: mariadb
+        environment:
+            MARIADB_ROOT_PASSWORD: password
+            MARIADB_DATABASE: db
+            MARIADB_USER: user
+            MARIADB_PASSWORD: password
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        ports:
+            - 3306:3306
+    adminer:
+        image: adminer
+        container_name: adminer-mariadb
+        ports:
+            - 8080:8080
 ```

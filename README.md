@@ -4,10 +4,12 @@
 - [Configuración de docker](#settings-docker)
 - [Instalación de docker-compose](#install-docker-compose)
 - [Contenedores](#container)
-  - [Portainer](#install-portainer-ce)
-  - [Pi-Hole](#install-pi-hole)
-  - [NextCloud](#install-nextcloud)
-  - [Netdata](#install-netdata)
+    - [Portainer](#install-portainer-ce)
+    - [Pi-Hole](#install-pi-hole)
+    - [NextCloud](#install-nextcloud)
+    - [Netdata](#install-netdata)
+    - [Base de datos](#database)
+        - [MySQL](#install-mysql)
 
 <a name="install-docker"></a>
 
@@ -191,4 +193,37 @@ services:
             - /etc/os-release:/host/etc/os-release:ro
             - /var/log:/host/var/log:ro
             - /var/run/docker.sock:/var/run/docker.sock:ro
+```
+
+<a name="database"></a>
+
+### Base de datos
+
+<a name="install-mysql"></a>
+
+#### MySQL
+
+```yaml
+version: '3.1'
+services:
+    mysql:
+        image: mysql:8.3.0
+        container_name: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: datatable
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+        volumes:
+            - ./mysql:/var/lib/mysql
+        ports:
+            - 3306:3306
+        expose:
+            - 3306
+    adminer:
+        image: adminer
+        container_name: adminer-mysql
+        ports:
+        - 8080:8080
 ```

@@ -11,6 +11,7 @@
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
+        - [PostgreSQL](#install-postgresql)
 
 <a name="install-docker"></a>
 
@@ -84,7 +85,7 @@ sudo apt install -y docker-compose
 ### Portainer CE
 
 ```yaml
-version: "3"
+version: '3'
 services:
     portainer:
         image: portainer/portainer-ce:latest
@@ -102,7 +103,7 @@ services:
 ### Pi-Hole
 
 ```yaml
-version: "3"
+version: '3'
 
 # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 services:
@@ -205,7 +206,7 @@ services:
 #### MySQL
 
 ```yaml
-version: '3.1'
+version: '3'
 services:
     mysql:
         image: mysql:8.3.0
@@ -234,7 +235,7 @@ services:
 #### MariaDB
 
 ```yaml
-version: '3.1'
+version: '3'
 
 services:
     mariadb:
@@ -252,6 +253,32 @@ services:
     adminer:
         image: adminer
         container_name: adminer-mariadb
+        ports:
+            - 8080:8080
+```
+
+<a name="install-postgresql"></a>
+
+#### PostgreSQL
+
+```yaml
+version: '3'
+
+services:
+    postgresql:
+        image: postgres:16.2
+        container_name: postgresql
+        shm_size: 128mb
+        environment:
+            POSTGRES_USER: ubuntu
+            POSTGRES_DB: db
+            POSTGRES_PASSWORD: martinez
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - ./data:/var/lib/postgresql/data
+    adminer:
+        image: adminer
+        container_name: adminer-postgresql
         ports:
             - 8080:8080
 ```

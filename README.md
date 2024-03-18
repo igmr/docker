@@ -10,6 +10,7 @@
     - [NextCloud](#install-nextcloud)
     - [Netdata](#install-netdata)
     - [IT-Tools](#install-it-tools)
+    - [Stirling PDF](#install-stirling-pdf)
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
@@ -236,6 +237,25 @@ services:
         ports:
             - '8010:80'
 
+```
+
+<a name="install-stirling-pdf"></a>
+
+```yaml
+version: '3'
+
+services:
+    stirling-pdf:
+        image: frooodle/s-pdf:latest
+        ports:
+            - '8080:8080'
+        volumes:
+            - /location/of/trainingData:/usr/share/tesseract-ocr/5/tessdata #Required for extra OCR languages
+            - /location/of/extraConfigs:/configs
+#          - /location/of/customFiles:/customFiles/
+#          - /location/of/logs:/logs/
+        environment:
+            - DOCKER_ENABLE_SECURITY=false
 ```
 
 <a name="database"></a>

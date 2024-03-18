@@ -261,7 +261,7 @@ services:
             - DOCKER_ENABLE_SECURITY=false
 ```
 
-<a name="#install-mstream"></a>
+<a name="install-mstream"></a>
 
 ## mStream
 

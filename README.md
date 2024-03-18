@@ -9,6 +9,7 @@
     - [Pi-Hole](#install-pi-hole)
     - [NextCloud](#install-nextcloud)
     - [Netdata](#install-netdata)
+    - [IT-Tools](#install-it-tools)
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
@@ -219,6 +220,22 @@ services:
             - /etc/os-release:/host/etc/os-release:ro
             - /var/log:/host/var/log:ro
             - /var/run/docker.sock:/var/run/docker.sock:ro
+```
+
+<a name="install-it-tools"></a>
+
+#### IT-Tools
+
+```yaml
+version: '3.9'
+services:
+    it-tools:
+        image: 'corentinth/it-tools:latest'
+        container_name: it-tools
+        restart: unless-stopped
+        ports:
+            - '8010:80'
+
 ```
 
 <a name="database"></a>

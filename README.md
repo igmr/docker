@@ -11,6 +11,7 @@
     - [Netdata](#install-netdata)
     - [IT-Tools](#install-it-tools)
     - [Stirling PDF](#install-stirling-pdf)
+    - [mStream](#install-mstream)
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
@@ -258,6 +259,29 @@ services:
 #          - /location/of/logs:/logs/
         environment:
             - DOCKER_ENABLE_SECURITY=false
+```
+
+<a name="#install-mstream"></a>
+
+## mStream
+
+```yaml
+version: '3'
+services:
+    mstream:
+        image: lscr.io/linuxserver/mstream:latest
+        container_name: mstream
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Etc/UTC
+        volumes:
+            - /path/to/data:/config
+            - /path/to/music:/music
+        ports:
+            - 3000:3000
+        restart: unless-stopped
+
 ```
 
 <a name="database"></a>

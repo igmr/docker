@@ -241,6 +241,8 @@ services:
 
 <a name="install-stirling-pdf"></a>
 
+#### Stirling PDF
+
 ```yaml
 version: '3'
 

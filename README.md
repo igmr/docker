@@ -12,6 +12,7 @@
     - [IT-Tools](#install-it-tools)
     - [Stirling PDF](#install-stirling-pdf)
     - [mStream](#install-mstream)
+    - [Ampache](#install-ampache)
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
@@ -281,6 +282,26 @@ services:
         ports:
             - 3000:3000
         restart: unless-stopped
+
+```
+<a name="install-ampache"></a>
+
+### Ampache
+
+```yaml
+version: '3'
+
+services:
+    ampache:
+        image: 'ampache/ampache:nosql'
+        container_name: ampache
+        ports:
+            - 8013:80
+        volumes:
+            - ./data/music:/media
+            - ./data/config:/var/www/config
+            - ./data/log:/var/log/ampache
+            - ./data/mysql:/var/lib/mysql
 
 ```
 

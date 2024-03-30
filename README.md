@@ -7,12 +7,14 @@
     - [Heimdall](#install-heimdall) 
     - [Portainer](#install-portainer-ce)
     - [Pi-Hole](#install-pi-hole)
-    - [NextCloud](#install-nextcloud)
     - [Netdata](#install-netdata)
     - [IT-Tools](#install-it-tools)
     - [Stirling PDF](#install-stirling-pdf)
     - [mStream](#install-mstream)
     - [Ampache](#install-ampache)
+    - [Servidor de archivos](#cloud)
+        - [NextCloud](#install-nextcloud)
+        - [OwnCloud](#install-owncloud)
     - [Base de datos](#database)
         - [MySQL](#install-mysql)
         - [MariaDB](#install-mariadb)
@@ -156,44 +158,6 @@ services:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
 ```
 
-<a name="install-nextcloud"></a>
-
-### NextCloud
-
-```yaml
-version: '3'
-
-services:
-    nextcloud_db:
-        image: mariadb:10.6
-        container_name: nextcloud_db
-        command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
-        volumes:
-            - ./mariadb:/var/lib/mysql
-        environment:
-            - MYSQL_ROOT_PASSWORD=password
-            - MYSQL_PASSWORD=password
-            - MYSQL_DATABASE=nextcloud
-            - MYSQL_USER=nextcloud
-    nextcloud:
-        image: nextcloud
-        container_name: nextcloud
-        ports:
-            - 443:443
-            - 80:80
-        links:
-            - nextcloud_db
-        volumes:
-            - ./nextcloud:/var/www/html
-        environment:
-            - NEXTCLOUD_ADMIN_USER=nextcloud
-            - NEXTCLOUD_ADMIN_PASSWORD=password
-            - MYSQL_HOST=dbnextcloud
-            - MYSQL_PASSWORD=password
-            - MYSQL_DATABASE=nextcloud
-            - MYSQL_USER=nextcloud
-```
-
 <a name="install-netdata"></a>
 
 ### Netdata
@@ -304,6 +268,133 @@ services:
             - ./data/mysql:/var/lib/mysql
 
 ```
+
+<a name="cloud"></a>
+
+### Servidor de archivos
+
+
+<a name="install-nextcloud"></a>
+
+### NextCloud
+
+```yaml
+version: '3'
+
+services:
+    nextcloud_db:
+        image: mariadb:10.6
+        container_name: nextcloud_db
+        command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=nextcloud
+            - MYSQL_USER=nextcloud
+    nextcloud:
+        image: nextcloud
+        container_name: nextcloud
+        ports:
+            - 443:443
+            - 80:80
+        links:
+            - nextcloud_db
+        volumes:
+            - ./nextcloud:/var/www/html
+        environment:
+            - NEXTCLOUD_ADMIN_USER=nextcloud
+            - NEXTCLOUD_ADMIN_PASSWORD=password
+            - MYSQL_HOST=dbnextcloud
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=nextcloud
+            - MYSQL_USER=nextcloud
+```
+
+
+<a name="install-owncloud"></a>
+
+#### OwnCloud
+
+```yaml
+version: "3"
+
+services:
+  owncloud:
+    image: owncloud/server:${OWNCLOUD_VERSION}
+    container_name: owncloud_server
+    restart: always
+    ports:
+      - ${HTTP_PORT}:8080
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
+      - OWNCLOUD_TRUSTED_DOMAINS=${OWNCLOUD_TRUSTED_DOMAINS}
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
+      - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./data:/mnt/data
+
+  mariadb:
+    image: mariadb:10.11 # minimum required ownCloud version is 10.9
+    container_name: owncloud_mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+      - MARIADB_AUTO_UPGRADE=1
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  redis:
+    image: redis:6
+    container_name: owncloud_redis
+    restart: always
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./redis:/data
+```
+
+Variables de entorno
+
+```env
+OWNCLOUD_VERSION=10.14
+OWNCLOUD_DOMAIN=localhost:8080
+OWNCLOUD_TRUSTED_DOMAINS=localhost
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin
+HTTP_PORT=8080
+```
+
 
 <a name="database"></a>
 

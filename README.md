@@ -9,9 +9,11 @@
     - [Pi-Hole](#install-pi-hole)
     - [Netdata](#install-netdata)
     - [IT-Tools](#install-it-tools)
-    - [Stirling PDF](#install-stirling-pdf)
     - [mStream](#install-mstream)
     - [Ampache](#install-ampache)
+    - [Utilerias](#utils)
+        - [Stirling PDF](#stirling-pdf)
+        - [Flatnotes](#flatnotes)
     - [Servidor de archivos](#cloud)
         - [NextCloud](#install-nextcloud)
         - [OwnCloud](#install-owncloud)
@@ -205,27 +207,6 @@ services:
 
 ```
 
-<a name="install-stirling-pdf"></a>
-
-#### Stirling PDF
-
-```yaml
-version: '3'
-
-services:
-    stirling-pdf:
-        image: frooodle/s-pdf:latest
-        ports:
-            - '8080:8080'
-        volumes:
-            - /location/of/trainingData:/usr/share/tesseract-ocr/5/tessdata #Required for extra OCR languages
-            - /location/of/extraConfigs:/configs
-#          - /location/of/customFiles:/customFiles/
-#          - /location/of/logs:/logs/
-        environment:
-            - DOCKER_ENABLE_SECURITY=false
-```
-
 <a name="install-mstream"></a>
 
 ## mStream
@@ -269,10 +250,62 @@ services:
 
 ```
 
+<a name="utils"></a>
+
+### Utilerias
+
+<a name="stirling-pdf"></a>
+
+#### Stirling PDF
+
+```yaml
+version: '3'
+
+services:
+    stirling-pdf:
+        image: frooodle/s-pdf:latest
+        ports:
+            - '8080:8080'
+        volumes:
+            - /location/of/trainingData:/usr/share/tesseract-ocr/5/tessdata #Required for extra OCR languages
+            - /location/of/extraConfigs:/configs
+#          - /location/of/customFiles:/customFiles/
+#          - /location/of/logs:/logs/
+        environment:
+            - DOCKER_ENABLE_SECURITY=false
+```
+
+<a name="flatnotes"></a>
+
+```yaml
+version: "3"
+
+services:
+    flatnotes:
+        image: elestio/flatnotes:latest
+        restart: always
+        ports:
+            - "8080:8080"
+        environment:
+            FLATNOTES_AUTH_TYPE: "password"
+            FLATNOTES_USERNAME: ${ADMIN_EMAIL}
+            FLATNOTES_PASSWORD: ${ADMIN_PASSWORD}
+            FLATNOTES_SECRET_KEY: ${ADMIN_PASSWORD}
+        volumes:
+            ./data:/data
+```
+
+```env
+ADMIN_EMAIL=demo@demo.com
+ADMIN_PASSWORD=password
+ADMIN_PASSWORD=otherpassword
+```
+
+### NextCloud
+
 <a name="cloud"></a>
 
 ### Servidor de archivos
-
 
 <a name="install-nextcloud"></a>
 

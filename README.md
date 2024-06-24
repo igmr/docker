@@ -107,7 +107,7 @@ services:
         environment:
             - PUID=1000
             - PGID=1000
-            - APP_KEY=
+            - APP_KEY= # https://speedtest-tracker.dev/
             - DB_CONNECTION=sqlite
             - SPEEDTEST_SCHEDULE=
             - SPEEDTEST_SERVERS=

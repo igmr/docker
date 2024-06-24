@@ -4,13 +4,15 @@
 - [Configuración de docker](#settings-docker)
 - [Instalación de docker-compose](#install-docker-compose)
 - [Contenedores](#container)
-    - [Heimdall](#install-heimdall) 
     - [Portainer](#install-portainer-ce)
     - [Pi-Hole](#install-pi-hole)
     - [Netdata](#install-netdata)
     - [IT-Tools](#install-it-tools)
     - [mStream](#install-mstream)
     - [Ampache](#install-ampache)
+    - [Panel de control](#dashboard)
+        - [Flame](#install-flame)
+        - [Heimdall](#install-heimdall) 
     - [Utilerias](#utils)
         - [Stirling PDF](#stirling-pdf)
         - [Flatnotes](#flatnotes)
@@ -89,28 +91,6 @@ sudo apt install -y docker-compose
 <a name="container"></a>
 
 ## Contenedores
-
-<a name="install-heimdall"></a>
-
-### Heimdall
-
-```yaml
-version: '3'
-services:
-    heimdall:
-        image: linuxserver/heimdall
-        container_name: heimdall
-        volumes:
-            - /home/user/appdata/heimdall:/config
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - TZ=Europe/London
-        ports:
-            - 80:80
-            - 443:443
-        restart: unless-stopped
-```
 
 <a name="install-portainer-ce"></a>
 
@@ -248,6 +228,62 @@ services:
             - ./data/log:/var/log/ampache
             - ./data/mysql:/var/lib/mysql
 
+```
+
+
+<a name="Dashboard"></a>
+
+### Panel de control
+
+<a name="install-flame"></a>
+
+#### Flame
+
+```yaml
+version: '3.6'
+
+services:
+    flame:
+        image: pawelmalak/flame
+        container_name: flame
+        volumes:
+            - /path/to/host/data:/app/data
+            - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
+        ports:
+            - 5005:5005
+        secrets:
+            - password # optional but required for (1)
+        environment:
+            - PASSWORD=flame_password
+            - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
+        restart: unless-stopped
+
+# optional but required for Docker secrets (1)
+secrets:
+    password:
+        file: /path/to/secrets/password
+```
+
+<a name="install-heimdall"></a>
+
+#### Heimdall
+
+```yaml
+version: '3'
+services:
+    heimdall:
+        image: linuxserver/heimdall
+        container_name: heimdall
+        volumes:
+            - /home/user/appdata/heimdall:/config
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/London
+        ports:
+            - 80:80
+            - 443:443
+        restart: unless-stopped
 ```
 
 <a name="utils"></a>

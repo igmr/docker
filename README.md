@@ -170,6 +170,29 @@ services:
       - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
 ```
 
+#### Synology NAS
+
+```yaml
+services:
+    pihole:
+        image: pihole/pihole:latest
+        container_name: pihole
+        restart: unless-stopped
+        network_mode: host
+        environment:
+            - PIHOLE_UID= #CHANGE_TO_YOUR_UID
+            - PIHOLE_GID= #CHANGE_TO_YOUR_GID
+            - TZ= #CHANGE_TO_YOUR_TZ
+            - WEBPASSWORD= #YOUR_PASSWORD
+            - DNSMASQ_LISTENING=local
+            - WEB_PORT= #ADD_PORT_LISTENER
+            - DNSMASQ_USER=pihole
+            - FTLCONF_LOCAL_IPV4= #YOUR_IP_ADDRESS_V4
+        volumes:
+            - /volume1/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
+            - /volume1/docker/pihole/pihole:/etc/pihole
+```
+
 <a name="install-netdata"></a>
 
 ### Netdata

@@ -4,27 +4,31 @@
 - [Configuración de docker](#settings-docker)
 - [Instalación de docker-compose](#install-docker-compose)
 - [Contenedores](#container)
-    - [SpeedTest Tracker](#install-speed-test-tracker)
-    - [Portainer](#install-portainer-ce)
-    - [Pi-Hole](#install-pi-hole)
-    - [Netdata](#install-netdata)
-    - [IT-Tools](#install-it-tools)
-    - [mStream](#install-mstream)
-    - [Ampache](#install-ampache)
-    - [Panel de control](#dashboard)
-        - [Flame](#install-flame)
-        - [Heimdall](#install-heimdall) 
-    - [Utilerias](#utils)
-        - [Stirling PDF](#stirling-pdf)
-        - [Flatnotes](#flatnotes)
-    - [Servidor de archivos](#cloud)
-        - [NextCloud](#install-nextcloud)
-        - [OwnCloud](#install-owncloud)
-    - [Base de datos](#database)
-        - [MySQL](#install-mysql)
-        - [MariaDB](#install-mariadb)
-        - [PostgreSQL](#install-postgresql)
-        - [SQLite](#install-sqlite)
+  - [SpeedTest Tracker](#install-speed-test-tracker)
+  - [Portainer](#install-portainer-ce)
+  - [Pi-Hole](#install-pi-hole)
+  - [Netdata](#install-netdata)
+  - [IT-Tools](#install-it-tools)
+  - [mStream](#install-mstream)
+  - [Ampache](#install-ampache)
+  - [Panel de control](#dashboard)
+    - [Flame](#install-flame)
+    - [Heimdall](#install-heimdall)
+  - [Utilerias](#utils)
+    - [Stirling PDF](#stirling-pdf)
+    - [Flatnotes](#flatnotes)
+  - [Servidor de archivos](#cloud)
+    - [NextCloud](#install-nextcloud)
+    - [OwnCloud](#install-owncloud)
+  - [Base de datos](#database)
+    - [MySQL](#install-mysql)
+    - [MariaDB](#install-mariadb)
+    - [PostgreSQL](#install-postgresql)
+    - [SQLite](#install-sqlite)
+  - [Diseño](#draw)
+    - [Excalidraw](#install-excalidraw)
+    - [DrawDB](#install-drawdb)
+    - [Draw.io](#install-drawio)
 
 <a name="install-docker"></a>
 
@@ -52,6 +56,7 @@ sudo apt update -y
 # =============================================================================
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+
 <a name="settings-docker"></a>
 
 ## Configuración de docker
@@ -89,6 +94,7 @@ docker run hello-world
 # =============================================================================
 sudo apt install -y docker-compose
 ```
+
 <a name="container"></a>
 
 ## Contenedores
@@ -99,27 +105,27 @@ sudo apt install -y docker-compose
 
 ```yaml
 services:
-    speedtest-tracker:
-        container_name: speedtest-tracker
-        ports:
-            - 8080:80
-            - 8443:443
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - APP_KEY= # https://speedtest-tracker.dev/
-            - DB_CONNECTION=sqlite
-            - SPEEDTEST_SCHEDULE=
-            - SPEEDTEST_SERVERS=
-            - PRUNE_RESULTS_OLDER_THAN=
-            - CHART_DATETIME_FORMAT= 
-            - DATETIME_FORMAT=
-            - APP_TIMEZONE=
-        volumes:
-            - /path/to/data:/config
-            - /path/to-custom-ssl-keys:/config/keys
-        image: lscr.io/linuxserver/speedtest-tracker:0.20.6
-        restart: unless-stopped
+  speedtest-tracker:
+    container_name: speedtest-tracker
+    image: lscr.io/linuxserver/speedtest-tracker:0.20.6
+    ports:
+      - 8080:80
+      - 8443:443
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - APP_KEY= # https://speedtest-tracker.dev/
+      - DB_CONNECTION=sqlite
+      - SPEEDTEST_SCHEDULE=
+      - SPEEDTEST_SERVERS=
+      - PRUNE_RESULTS_OLDER_THAN=
+      - CHART_DATETIME_FORMAT=
+      - DATETIME_FORMAT=
+      - APP_TIMEZONE=
+    volumes:
+      - /path/to/data:/config
+      - /path/to-custom-ssl-keys:/config/keys
+    restart: unless-stopped
 ```
 
 <a name="install-portainer-ce"></a>
@@ -127,17 +133,16 @@ services:
 ### Portainer CE
 
 ```yaml
-version: '3'
+version: "3"
 services:
-    portainer:
-        image: portainer/portainer-ce:latest
-        container_name: portainer
-        ports:
-            - 9443:9443
-        volumes:
-            - /home/ubuntu/docker/portainer/data:/data
-            - /var/run/docker.sock:/var/run/docker.sock
-
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - 9443:9443
+    volumes:
+      - /home/ubuntu/docker/portainer/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
 ```
 
 <a name="install-pi-hole"></a>
@@ -145,7 +150,7 @@ services:
 ### Pi-Hole
 
 ```yaml
-version: '3'
+version: "3"
 
 # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 services:
@@ -159,8 +164,8 @@ services:
       - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
       - "80:80/tcp"
     environment:
-      TZ: 'America/Chicago'
-      WEBPASSWORD: 'your-password'
+      TZ: "America/Chicago"
+      WEBPASSWORD: "your-password"
     # Volumes store your data between container upgrades
     volumes:
       - ./etc-pihole:/etc/pihole
@@ -174,23 +179,23 @@ services:
 
 ```yaml
 services:
-    pihole:
-        image: pihole/pihole:latest
-        container_name: pihole
-        restart: unless-stopped
-        network_mode: host
-        environment:
-            - PIHOLE_UID= #CHANGE_TO_YOUR_UID
-            - PIHOLE_GID= #CHANGE_TO_YOUR_GID
-            - TZ= #CHANGE_TO_YOUR_TZ
-            - WEBPASSWORD= #YOUR_PASSWORD
-            - DNSMASQ_LISTENING=local
-            - WEB_PORT= #ADD_PORT_LISTENER
-            - DNSMASQ_USER=pihole
-            - FTLCONF_LOCAL_IPV4= #YOUR_IP_ADDRESS_V4
-        volumes:
-            - /volume1/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
-            - /volume1/docker/pihole/pihole:/etc/pihole
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PIHOLE_UID= #CHANGE_TO_YOUR_UID
+      - PIHOLE_GID= #CHANGE_TO_YOUR_GID
+      - TZ= #CHANGE_TO_YOUR_TZ
+      - WEBPASSWORD= #YOUR_PASSWORD
+      - DNSMASQ_LISTENING=local
+      - WEB_PORT= #ADD_PORT_LISTENER
+      - DNSMASQ_USER=pihole
+      - FTLCONF_LOCAL_IPV4= #YOUR_IP_ADDRESS_V4
+    volumes:
+      - /volume1/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
+      - /volume1/docker/pihole/pihole:/etc/pihole
 ```
 
 <a name="install-netdata"></a>
@@ -198,30 +203,30 @@ services:
 ### Netdata
 
 ```yaml
-version: '3'
+version: "3"
 services:
-    netdata:
-        image: netdata/netdata
-        container_name: netdata
-        hostname: localhost
-        ports:
-          - 19999:19999
-        cap_add:
-            - SYS_PTRACE
-        security_opt:
-            - apparmor:unconfined
-        volumes:
-            - ./netdata/netdataconfig/netdata:/etc/netdata
-            - ./netdata/netdatalib:/var/lib/netdata
-            - ./netdata/netdatacache:/var/cache/netdata
-            - /etc/passwd:/host/etc/passwd:ro
-            - /etc/group:/host/etc/group:ro
-            - /etc/localtime:/etc/localtime:ro
-            - /proc:/host/proc:ro
-            - /sys:/host/sys:ro
-            - /etc/os-release:/host/etc/os-release:ro
-            - /var/log:/host/var/log:ro
-            - /var/run/docker.sock:/var/run/docker.sock:ro
+  netdata:
+    container_name: netdata
+    image: netdata/netdata
+    hostname: localhost
+    ports:
+      - 19999:19999
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ./netdata/netdataconfig/netdata:/etc/netdata
+      - ./netdata/netdatalib:/var/lib/netdata
+      - ./netdata/netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/log:/host/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 ```
 
 <a name="install-it-tools"></a>
@@ -229,15 +234,14 @@ services:
 #### IT-Tools
 
 ```yaml
-version: '3.9'
+version: "3.9"
 services:
-    it-tools:
-        image: 'corentinth/it-tools:latest'
-        container_name: it-tools
-        restart: unless-stopped
-        ports:
-            - '8010:80'
-
+  it-tools:
+    container_name: it-tools
+    image: "corentinth/it-tools:latest"
+    restart: unless-stopped
+    ports:
+      - "8010:80"
 ```
 
 <a name="install-mstream"></a>
@@ -245,44 +249,42 @@ services:
 ## mStream
 
 ```yaml
-version: '3'
+version: "3"
 services:
-    mstream:
-        image: lscr.io/linuxserver/mstream:latest
-        container_name: mstream
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - TZ=Etc/UTC
-        volumes:
-            - /path/to/data:/config
-            - /path/to/music:/music
-        ports:
-            - 3000:3000
-        restart: unless-stopped
-
+  mstream:
+    container_name: mstream
+    image: lscr.io/linuxserver/mstream:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /path/to/data:/config
+      - /path/to/music:/music
+    ports:
+      - 3000:3000
+    restart: unless-stopped
 ```
+
 <a name="install-ampache"></a>
 
 ### Ampache
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
-    ampache:
-        image: 'ampache/ampache:nosql'
-        container_name: ampache
-        ports:
-            - 8013:80
-        volumes:
-            - ./data/music:/media
-            - ./data/config:/var/www/config
-            - ./data/log:/var/log/ampache
-            - ./data/mysql:/var/lib/mysql
-
+  ampache:
+    container_name: ampache
+    image: "ampache/ampache:nosql"
+    ports:
+      - 8013:80
+    volumes:
+      - ./data/music:/media
+      - ./data/config:/var/www/config
+      - ./data/log:/var/log/ampache
+      - ./data/mysql:/var/lib/mysql
 ```
-
 
 <a name="Dashboard"></a>
 
@@ -293,28 +295,28 @@ services:
 #### Flame
 
 ```yaml
-version: '3.6'
+version: "3.6"
 
 services:
-    flame:
-        image: pawelmalak/flame
-        container_name: flame
-        volumes:
-            - /path/to/host/data:/app/data
-            - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
-        ports:
-            - 5005:5005
-        secrets:
-            - password # optional but required for (1)
-        environment:
-            - PASSWORD=flame_password
-            - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
-        restart: unless-stopped
+  flame:
+    container_name: flame
+    image: pawelmalak/flame
+    volumes:
+      - /path/to/host/data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
+    ports:
+      - 5005:5005
+    secrets:
+      - password # optional but required for (1)
+    environment:
+      - PASSWORD=flame_password
+      - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
+    restart: unless-stopped
 
 # optional but required for Docker secrets (1)
 secrets:
-    password:
-        file: /path/to/secrets/password
+  password:
+    file: /path/to/secrets/password
 ```
 
 <a name="install-heimdall"></a>
@@ -322,21 +324,21 @@ secrets:
 #### Heimdall
 
 ```yaml
-version: '3'
+version: "3"
 services:
-    heimdall:
-        image: linuxserver/heimdall
-        container_name: heimdall
-        volumes:
-            - /home/user/appdata/heimdall:/config
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - TZ=Europe/London
-        ports:
-            - 80:80
-            - 443:443
-        restart: unless-stopped
+  heimdall:
+    container_name: heimdall
+    image: linuxserver/heimdall
+    volumes:
+      - /home/user/appdata/heimdall:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
 ```
 
 <a name="utils"></a>
@@ -348,20 +350,21 @@ services:
 #### Stirling PDF
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
-    stirling-pdf:
-        image: frooodle/s-pdf:latest
-        ports:
-            - '8080:8080'
-        volumes:
-            - /location/of/trainingData:/usr/share/tesseract-ocr/5/tessdata #Required for extra OCR languages
-            - /location/of/extraConfigs:/configs
-#          - /location/of/customFiles:/customFiles/
-#          - /location/of/logs:/logs/
-        environment:
-            - DOCKER_ENABLE_SECURITY=false
+  stirling-pdf:
+    container_name: stirling-pdf
+    image: frooodle/s-pdf:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - /location/of/trainingData:/usr/share/tesseract-ocr/5/tessdata #Required for extra OCR languages
+      - /location/of/extraConfigs:/configs
+    #          - /location/of/customFiles:/customFiles/
+    #          - /location/of/logs:/logs/
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
 ```
 
 <a name="flatnotes"></a>
@@ -370,18 +373,18 @@ services:
 version: "3"
 
 services:
-    flatnotes:
-        image: elestio/flatnotes:latest
-        restart: always
-        ports:
-            - "8080:8080"
-        environment:
-            FLATNOTES_AUTH_TYPE: "password"
-            FLATNOTES_USERNAME: ${ADMIN_EMAIL}
-            FLATNOTES_PASSWORD: ${ADMIN_PASSWORD}
-            FLATNOTES_SECRET_KEY: ${ADMIN_PASSWORD}
-        volumes:
-            ./data:/data
+  flatnotes:
+    container_name: flatnotes
+    image: elestio/flatnotes:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      FLATNOTES_AUTH_TYPE: "password"
+      FLATNOTES_USERNAME: ${ADMIN_EMAIL}
+      FLATNOTES_PASSWORD: ${ADMIN_PASSWORD}
+      FLATNOTES_SECRET_KEY: ${ADMIN_PASSWORD}
+    volumes: ./data:/data
 ```
 
 ```env
@@ -401,39 +404,38 @@ ADMIN_PASSWORD=otherpassword
 ### NextCloud
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
-    nextcloud_db:
-        image: mariadb:10.6
-        container_name: nextcloud_db
-        command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
-        volumes:
-            - ./mariadb:/var/lib/mysql
-        environment:
-            - MYSQL_ROOT_PASSWORD=password
-            - MYSQL_PASSWORD=password
-            - MYSQL_DATABASE=nextcloud
-            - MYSQL_USER=nextcloud
-    nextcloud:
-        image: nextcloud
-        container_name: nextcloud
-        ports:
-            - 443:443
-            - 80:80
-        links:
-            - nextcloud_db
-        volumes:
-            - ./nextcloud:/var/www/html
-        environment:
-            - NEXTCLOUD_ADMIN_USER=nextcloud
-            - NEXTCLOUD_ADMIN_PASSWORD=password
-            - MYSQL_HOST=dbnextcloud
-            - MYSQL_PASSWORD=password
-            - MYSQL_DATABASE=nextcloud
-            - MYSQL_USER=nextcloud
+  nextcloud_db:
+    container_name: nextcloud_db
+    image: mariadb:10.6
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+  nextcloud:
+    container_name: nextcloud
+    image: nextcloud
+    ports:
+      - 443:443
+      - 80:80
+    links:
+      - nextcloud_db
+    volumes:
+      - ./nextcloud:/var/www/html
+    environment:
+      - NEXTCLOUD_ADMIN_USER=nextcloud
+      - NEXTCLOUD_ADMIN_PASSWORD=password
+      - MYSQL_HOST=dbnextcloud
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
 ```
-
 
 <a name="install-owncloud"></a>
 
@@ -444,8 +446,8 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/server:${OWNCLOUD_VERSION}
     container_name: owncloud_server
+    image: owncloud/server:${OWNCLOUD_VERSION}
     restart: always
     ports:
       - ${HTTP_PORT}:8080
@@ -517,7 +519,6 @@ ADMIN_PASSWORD=admin
 HTTP_PORT=8080
 ```
 
-
 <a name="database"></a>
 
 ### Base de datos
@@ -527,28 +528,28 @@ HTTP_PORT=8080
 #### MySQL
 
 ```yaml
-version: '3'
+version: "3"
 services:
-    mysql:
-        image: mysql:8.3.0
-        container_name: mysql
-        command: --default-authentication-plugin=mysql_native_password
-        environment:
-            MYSQL_ROOT_PASSWORD: password
-            MYSQL_DATABASE: datatable
-            MYSQL_USER: user
-            MYSQL_PASSWORD: password
-        volumes:
-            - ./mysql:/var/lib/mysql
-        ports:
-            - 3306:3306
-        expose:
-            - 3306
-    adminer:
-        image: adminer
-        container_name: adminer-mysql
-        ports:
-        - 8080:8080
+  mysql:
+    container_name: mysql
+    image: mysql:8.3.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: datatable
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+  adminer:
+    image: adminer
+    container_name: adminer-mysql
+    ports:
+      - 8080:8080
 ```
 
 <a name="install-mariadb"></a>
@@ -556,26 +557,26 @@ services:
 #### MariaDB
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
-    mariadb:
-        image: mariadb:11.1
-        container_name: mariadb
-        environment:
-            MARIADB_ROOT_PASSWORD: password
-            MARIADB_DATABASE: db
-            MARIADB_USER: user
-            MARIADB_PASSWORD: password
-        volumes:
-            - ./mariadb:/var/lib/mysql
-        ports:
-            - 3306:3306
-    adminer:
-        image: adminer
-        container_name: adminer-mariadb
-        ports:
-            - 8080:8080
+  mariadb:
+    container_name: mariadb
+    image: mariadb:11.1
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: db
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    ports:
+      - 3306:3306
+  adminer:
+    image: adminer
+    container_name: adminer-mariadb
+    ports:
+      - 8080:8080
 ```
 
 <a name="install-postgresql"></a>
@@ -583,25 +584,25 @@ services:
 #### PostgreSQL
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
-    postgresql:
-        image: postgres:16.2
-        container_name: postgresql
-        shm_size: 128mb
-        environment:
-            POSTGRES_USER: ubuntu
-            POSTGRES_DB: db
-            POSTGRES_PASSWORD: martinez
-            PGDATA: /var/lib/postgresql/data/pgdata
-        volumes:
-            - ./data:/var/lib/postgresql/data
-    adminer:
-        image: adminer
-        container_name: adminer-postgresql
-        ports:
-            - 8080:8080
+  postgresql:
+    container_name: postgresql
+    image: postgres:16.2
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: ubuntu
+      POSTGRES_DB: db
+      POSTGRES_PASSWORD: martinez
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./data:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    container_name: adminer-postgresql
+    ports:
+      - 8080:8080
 ```
 
 <a name="install-sqlite"></a>
@@ -609,22 +610,74 @@ services:
 #### SQLite
 
 ```yaml
-version: '3'
+version: "3"
 
 services:
-    sqlitebrowser:
-        image: lscr.io/linuxserver/sqlitebrowser:latest
-        container_name: sqlitebrowser
-        security_opt:
-            - seccomp:unconfined #optional
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - TZ=Etc/UTC
-        volumes:
-            - /path/to/config:/config
-        ports:
-            - 3000:3000
-            - 3001:3001
+  sqlitebrowser:
+    container_name: sqlitebrowser
+    image: lscr.io/linuxserver/sqlitebrowser:latest
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /path/to/config:/config
+    ports:
+      - 3000:3000
+      - 3001:3001
 ```
 
+<a name="draw"></a>
+
+## Diseño
+
+<a name="install-excalidraw"></a>
+
+### Excalidraw
+
+```yaml
+version: "3.8"
+
+services:
+  excalidraw:
+    container_name: excalidraw
+    image: excalidraw/excalidraw:latest
+    ports:
+      - "3030:80"
+    restart: on-failure
+```
+
+<a name="install-drawdb"></a>
+
+### DrawDB
+
+```yaml
+version: "3.9"
+
+services:
+  drawdb:
+    container_name: DrawDB
+    image: xinsodev/drawdb
+    security_opt:
+      - no-new-privileges:false
+    ports:
+      - 7531:80
+    restart: on-failure:5
+```
+
+<a name="install-drawio"></a>
+
+### Draw.io
+
+```yaml
+version: "3.9"
+services:
+  drawio:
+    container_name: drawio
+    image: jgraph/drawio
+    restart: always
+    ports:
+      - "5022:8080"
+```
